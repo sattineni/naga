@@ -1,0 +1,47 @@
+<project name="softtech" default="installer" basedir=".">
+
+  <property name="build_dir" value="../build"/>
+  <property name="install_dir" value="../install"/>
+  <property name="qa" value="../QA"/>
+  <property name="backup" value="../Older_Builds"/>
+
+  
+  <target name="init">
+    <mkdir dir="${build_dir}"/>
+    <mkdir dir="${install_dir}"/>
+    <mkdir dir="${qa}"/>
+    <mkdir dir="${backup}"/>
+
+  </target>
+
+  <target name="compile" depends="init" description="compile the source " >
+    <javac srcdir="Server/src" destdir="${build_dir}"/>
+  </target>
+  
+   <target name="jar" depends="compile">
+        <jar basedir="${build_dir}" jarfile="${install_dir}/softtech.jar"/>
+   </target>
+
+   <target name="zip" depends="jar">
+        <zip destfile="${qa}/softtech.zip">
+        <fileset dir="${install_dir}"/>
+        </zip>
+   </target>
+   
+   <target name="bak">
+    <tstamp>
+        <format property="tprifix" pattern="d-MMMM-yyyy"/>
+    </tstamp>
+    
+    <copy file="${qa}/softtech.zip" tofile="${backup}/${tprifix}_softtech.zip"/>
+   </target>
+
+  <target name="installer" depends="clean, zip, bak"/>
+
+  <target name="clean" description="clean up" >
+    <delete dir="${build_dir}"/>
+    <delete dir="${install_dir}"/>
+    <delete dir="${qa}"/>
+  </target>
+
+</project>
